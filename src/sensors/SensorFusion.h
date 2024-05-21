@@ -52,6 +52,7 @@ namespace SlimeVR
                 restMinT = 2.0f;
                 restThGyr = 0.6f; // 400 norm
                 restThAcc = 0.06f; // 100 norm
+                mbeDivider = MBE_SAMPLE_RATE_DIVIDER;
             }
         };
         #endif

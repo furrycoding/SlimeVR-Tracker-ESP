@@ -275,6 +275,9 @@ struct VQFParams
      * Default value: 2.0
      */
     vqf_real_t magRejectionFactor;
+
+    // Sample rate divider for MBE
+    int mbeDivider;
 };
 
 /**
@@ -382,6 +385,8 @@ struct VQFState {
      * @brief Internal low-pass filter state for the rotated bias estimate used in motion bias estimation.
      */
     double motionBiasEstBiasLpState[2*2];
+
+    int mbeCounter;
 #endif
     /**
      * @brief Last (squared) deviations from the reference of the last sample used in rest detection.
@@ -476,6 +481,13 @@ struct VQFState {
  */
 struct VQFCoefficients
 {
+#ifndef VQF_NO_MOTION_BIAS_ESTIMATION
+    // A copy of acc filter, but running at the MBE the sample rate
+    vqf_real_t mbeAccTs;
+    double mbeAccLpB[3];
+    double mbeAccLpA[3];
+#endif
+
     /**
      * @brief Sampling time of the gyroscope measurements (in seconds).
      */
