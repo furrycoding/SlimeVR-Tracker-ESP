@@ -632,6 +632,7 @@ void VQF::resetState()
 #ifndef VQF_NO_MOTION_BIAS_ESTIMATION
     std::fill(state.motionBiasEstRLpState, state.motionBiasEstRLpState + 9*2, NaN);
     std::fill(state.motionBiasEstBiasLpState, state.motionBiasEstBiasLpState + 2*2, NaN);
+    state.mbeCounter = 0;
 #endif
 
     std::fill(state.restLastSquaredDeviations, state.restLastSquaredDeviations + 3, 0.0);
@@ -922,14 +923,16 @@ void VQF::setup()
     assert(coeffs.accTs > 0);
     assert(coeffs.magTs > 0);
 
+    auto mbeAccTs = coeffs.accTs * params.mbeDivider;
+
     filterCoeffs(params.tauAcc, coeffs.accTs, coeffs.accLpB, coeffs.accLpA);
-    filterCoeffs(params.tauAcc, coeffs.accTs * params.mbeDivider, coeffs.mbeAccLpB, coeffs.mbeAccLpA);
+    filterCoeffs(params.tauAcc, mbeAccTs, coeffs.mbeAccLpB, coeffs.mbeAccLpA);
 
     coeffs.kMag = gainFromTau(params.tauMag, coeffs.magTs);
 
     coeffs.biasP0 = square(params.biasSigmaInit*100.0);
     // the system noise increases the variance from 0 to (0.1 °/s)^2 in biasForgettingTime seconds
-    coeffs.biasV = square(0.1*100.0)*coeffs.accTs/params.biasForgettingTime;
+    coeffs.biasV = square(0.1*100.0)*mbeAccTs/params.biasForgettingTime;
 
 #ifndef VQF_NO_MOTION_BIAS_ESTIMATION
     vqf_real_t pMotion = square(params.biasSigmaMotion*100.0);
