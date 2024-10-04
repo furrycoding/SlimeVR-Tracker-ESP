@@ -35,8 +35,16 @@
 struct ServerFeatures {
 public:
     enum EServerFeatureFlags: uint32_t {
-        // Server can parse bundle packets: `PACKET_BUNDLE` = 100 (0x64).
+        /** Server can parse bundle packets: `PACKET_BUNDLE` = 100 (0x64). */
         PROTOCOL_BUNDLE_SUPPORT,
+
+        /** Server can parse bundle packets with compact headers and packed IMU rotation/acceleration frames:
+         - `PACKET_BUNDLE_COMPACT` = 101 (0x65),
+        - `PACKET_ROTATION_AND_ACCELERATION` = 23 (0x17). */
+        PROTOCOL_BUNDLE_COMPACT_SUPPORT,
+
+        // Server can parse compressed rotation data (identified by QUAT_COMPRESSION_* flags)
+        PROTOCOL_COMPRESSED_ROTATION_SUPPORT,
 
         // Add new flags here
 
@@ -74,6 +82,11 @@ public:
     enum EFirmwareFeatureFlags: uint32_t {
         // EXAMPLE_FEATURE,
 		B64_WIFI_SCANNING = 1,
+
+        QUAT_COMPRESSION_DROP32,
+		QUAT_COMPRESSION_OCT32,
+		QUAT_COMPRESSION_DROP40,
+		QUAT_COMPRESSION_OCT40,
 
         // Add new flags here
 
